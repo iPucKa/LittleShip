@@ -1,34 +1,24 @@
 using UnityEngine;
 
-public class Shooter : MonoBehaviour
+public class Shooter
 {
-	[SerializeField] private ParticleSystem _explosion;
+	private readonly ParticleSystem _explosion;
+	private readonly Camera _camera;
 
-	private const int RightMouseButton = 1;
-	private Camera _camera;
-
-	private void Awake()
+	public Shooter(ParticleSystem explosion, Camera camera)
 	{
-		_camera = Camera.main;
+		_explosion = explosion;
+		_camera = camera;
 	}
 
-	private void Update()
-	{
-		if (Input.GetMouseButtonDown(RightMouseButton))		
-			Shoot();		
-	}
-
-	private void Shoot()
+	public void Shoot()
 	{
 		Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 
 		if (Physics.Raycast(ray, out RaycastHit hit))
 		{
-			ParticleSystem explosion = Instantiate(_explosion);
-
-			ExplosionEffect effect = new ExplosionEffect(5, explosion);
-
+			ExplosionEffect effect = new ExplosionEffect(5, _explosion);
 			effect.Execute(hit.point);
 		}
-	}	
+	}
 }

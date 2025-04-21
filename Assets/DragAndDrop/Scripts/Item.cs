@@ -1,19 +1,43 @@
 using UnityEngine;
 
-public class Item : MonoBehaviour, IDamageable
+public class Item : MonoBehaviour, IGrabable, IDamageable
 {
-	[SerializeField] private ParticleSystem _explodeEffect;
-	public void Drag()
+	private const float UpForce = 8;
+	private const float SideForce = 3;
+
+	private Rigidbody _rigidbody;
+	private Collider _collider;
+
+	private void Awake()
 	{
-		transform.localScale *= 1.2f;
-		GetComponent<Collider>().enabled = false;
-		GetComponent<Rigidbody>().isKinematic = true;
+		_rigidbody = GetComponent<Rigidbody>();
+		_collider = GetComponent<Collider>();
 	}
 
-	public void Drop()
+	public void OnGrab()
+	{
+		transform.localScale *= 1.2f;
+		_collider.enabled = false;
+		_rigidbody.isKinematic = true;
+	}
+
+	public void OnRelease()
 	{
 		transform.localScale /= 1.2f;
-		GetComponent<Collider>().enabled = true;
-		GetComponent<Rigidbody>().isKinematic = false;
+		_collider.enabled = true;
+		_rigidbody.isKinematic = false;
+	}
+
+	public void OnSwiping(Vector3 point)
+	{
+		transform.position = point;
+	}
+
+	public void TakeDamage(Vector3 point)
+	{
+		Vector3 direction = (_rigidbody.position - point).normalized;
+
+		_rigidbody.AddForce(Vector3.up * UpForce, ForceMode.VelocityChange);
+		_rigidbody.AddForce(direction * SideForce, ForceMode.VelocityChange);
 	}
 }
