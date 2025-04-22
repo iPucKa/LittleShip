@@ -15,11 +15,11 @@ public class DragDropHandler
 		_camera = camera;
 	}
 
-	public void Grab()
+	public void Grab(Vector3 position)
 	{
 		_isMoving = true;
 
-		_previousPosition = Input.mousePosition;
+		_previousPosition = position;
 
 		if (Physics.Raycast(GetRay(_previousPosition), out RaycastHit hit))
 			if (hit.collider.TryGetComponent(out IGrabable grabable))
@@ -39,18 +39,18 @@ public class DragDropHandler
 		_isMoving = false;
 		_selectedItem = null;
 	}
-	public void Swiping()
+	public void Swiping(Vector3 position)
 	{
 		if (_isMoving == false)
 			return;
 
-		if (_previousPosition == Input.mousePosition)
+		if (_previousPosition == position)
 			return;
 
 		if (_selectedItem == null)
 			return;
 
-		_previousPosition = Input.mousePosition;
+		_previousPosition = position;
 
 		Ray touchRay = GetRay(_previousPosition);
 		Plane plane = new Plane(Vector3.up, new Vector3(0, 2, 0));

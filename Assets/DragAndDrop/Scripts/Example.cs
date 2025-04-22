@@ -12,34 +12,34 @@ public class Example : MonoBehaviour
 
 	private Camera _camera;
 
+	private Vector3 _position;
+
 	private void Awake()
 	{
 		_camera = Camera.main;
 
-		ParticleSystem explosion = Instantiate(_explosion);
-
-		Shooter shooter = new Shooter(explosion, _camera);
-		DragDropHandler dragDropHandler = new DragDropHandler(_camera);
-
-		_shooter = shooter;
-		_dragDropHandler = dragDropHandler;
+		_shooter = new Shooter(Instantiate(_explosion));
+		_dragDropHandler = new DragDropHandler(_camera);
 	}
 
 	private void Update()
 	{
+		_position = Input.mousePosition;
+
 		ProcessShoot();
 
 		ProcessClickDown();
 		ProcessClickUp();
 		ProcessMove();
-	}	
+	}
 
 	private void ProcessShoot()
 	{
 		if (Input.GetMouseButtonDown(RightMouseButton) == false)
 			return;
-		
-		_shooter.Shoot();
+
+		Ray ray = _camera.ScreenPointToRay(_position);
+		_shooter.Shoot(ray);
 	}
 
 	private void ProcessClickDown()
@@ -47,7 +47,7 @@ public class Example : MonoBehaviour
 		if (Input.GetMouseButtonDown(LeftMouseButton) == false)
 			return;
 
-		_dragDropHandler.Grab();
+		_dragDropHandler.Grab(_position);
 	}
 
 	public void ProcessClickUp()
@@ -61,7 +61,7 @@ public class Example : MonoBehaviour
 	private void ProcessMove()
 	{
 		if (Input.GetMouseButton(LeftMouseButton))
-			_dragDropHandler.Swiping();
+			_dragDropHandler.Swiping(_position);
 	}
 
 	private void OnDrawGizmos()
@@ -70,7 +70,7 @@ public class Example : MonoBehaviour
 		{
 			Gizmos.color = Color.red;
 
-			Vector3 mouseWorldPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
+			Vector3 mouseWorldPosition = _camera.ScreenToWorldPoint(_position);
 			Gizmos.DrawSphere(mouseWorldPosition, 1);
 			Gizmos.DrawRay(mouseWorldPosition, _camera.transform.forward * 100);
 		}

@@ -3,18 +3,14 @@ using UnityEngine;
 public class Shooter
 {
 	private readonly ParticleSystem _explosion;
-	private readonly Camera _camera;
 
-	public Shooter(ParticleSystem explosion, Camera camera)
+	public Shooter(ParticleSystem explosion)
 	{
 		_explosion = explosion;
-		_camera = camera;
 	}
 
-	public void Shoot()
+	public void Shoot(Ray ray)
 	{
-		Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-
 		if (Physics.Raycast(ray, out RaycastHit hit))
 		{
 			ExplosionEffect effect = new ExplosionEffect(5, _explosion);
